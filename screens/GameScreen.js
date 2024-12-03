@@ -89,10 +89,10 @@ export default function GameScreen({route, navigation}) {
         })
     );
     const images = [
-        require('../assets/images/Nivel_1_Elefante/elefante-1.png'),
-        require('../assets/images/Nivel_1_Elefante/elefante-2.png'),
-        require('../assets/images/Nivel_1_Elefante/elefante-3.png'),
-        require('../assets/images/Nivel_1_Elefante/elefante-4.png'),
+        require('../assets/images/Nivel_1_Elefante/elefante-piece-1.png'),
+        require('../assets/images/Nivel_1_Elefante/elefante-piece-2.png'),
+        require('../assets/images/Nivel_1_Elefante/elefante-piece-3.png'),
+        require('../assets/images/Nivel_1_Elefante/elefante-piece-4.png'),
     ];
 
     return (

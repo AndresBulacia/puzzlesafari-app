@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "name": "Elefante",
+        "pieces": [
+            {"id": 1, "image": "assets/images/Nivel_1_Elefante/elefante-piece-1.png"},
+            {"id": 2, "image": "assets/images/Nivel_1_Elefante/elefante-piece-2.png"},
+            {"id": 3, "image": "assets/images/Nivel_1_Elefante/elefante-piece-3.png"},
+            {"id": 4, "image": "assets/images/Nivel_1_Elefante/elefante-piece-4.png"}
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Mono",
+        "pieces": [
+            {"id": 1, "image": "assets/images/Nivel_2_Mono/mono-piece-1.png"},
+            {"id": 2, "image": "assets/images/Nivel_2_Mono/mono-piece-2.png"},
+            {"id": 3, "image": "assets/images/Nivel_2_Mono/mono-piece-3.png"},
+            {"id": 4, "image": "assets/images/Nivel_2_Mono/mono-piece-4.png"}
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Cebra",
+        "pieces": [
+            {"id": 1, "image": "assets/images/Nivel_3_Cebra/cebra-piece-1.png"},
+            {"id": 2, "image": "assets/images/Nivel_3_Cebra/cebra-piece-2.png"},
+            {"id": 3, "image": "assets/images/Nivel_3_Cebra/cebra-piece-3.png"},
+            {"id": 4, "image": "assets/images/Nivel_3_Cebra/cebra-piece-4.png"}
+        ]
+    },
+    {
+        "id": 4,
+        "name": "León",
+        "pieces": [
+            {"id": 1, "image": "assets/images/Nivel_4_Leon/leon-piece-1.png"},
+            {"id": 2, "image": "assets/images/Nivel_4_Leon/leon-piece-2.png"},
+            {"id": 3, "image": "assets/images/Nivel_4_Leon/leon-piece-3.png"},
+            {"id": 4, "image": "assets/images/Nivel_4_Leon/leon-piece-4.png"}
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Rinoceronte",
+        "pieces": [
+            {"id": 1, "image": "assets/images/Nivel_5_Rino/rino-piece-1.png"},
+            {"id": 2, "image": "assets/images/Nivel_5_Rino/rino-piece-2.png"},
+            {"id": 3, "image": "assets/images/Nivel_5_Rino/rino-piece-3.png"},
+            {"id": 4, "image": "assets/images/Nivel_5_Rino/rino-piece-4.png"}
+        ]
+    }
+]
