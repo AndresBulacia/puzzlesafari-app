@@ -53,13 +53,13 @@ export default function HomeScreen({ navigation }){
                 style={[styles.button, {backgroundColor: '#FFD700'}]}
                 onPress= {() => {
                     playButtonSound();
-                    navigation.navigate('GameScreen', {isMusicEnabled});
+                    navigation.navigate('LevelSelectionScreen', {isMusicEnabled});
                 }}
             >
-                <Text style={styles.buttonText}>Iniciar Juego</Text>
+                <Text style={styles.buttonText}>Jugar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={[styles.button, {backgroundColor: '#FFD700'}]}
                 onPress= {() => {
                     playButtonSound();
@@ -67,7 +67,7 @@ export default function HomeScreen({ navigation }){
                 }}
             >
                 <Text style={styles.buttonText}>Select Level</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
                 style={[styles.button, {backgroundColor: '#4CAF50'}]}

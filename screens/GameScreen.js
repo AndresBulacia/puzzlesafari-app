@@ -2,6 +2,9 @@ import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ImageBackground, PanResponder, Animated } from "react-native";
 import { useLevels } from "../context/LevelContext";
+import levelsData from '../assets/data/levels.json';
+import imageResolver from "../utils/imageResolver";
+import { ResizeMode } from "react-native-video";
 
 export default function GameScreen({route, navigation}) {
     const [timeLeft, setTimeLeft] = useState(500); //Temporizador
@@ -10,26 +13,31 @@ export default function GameScreen({route, navigation}) {
     const [isPaused, setIsPaused] = useState(false);
     const {levelId} = route.params;
     const {unlockNextLevel} = useLevels();
+
+    // Obtener los datos del nivel actual
+    const levelData = levelsData.find((level) => level.id === levelId);
     
+    // Posiciones iniciales y objetivo de las piezas
     const initialPosition = [
-        { x: 120, y: 120 }, // Posición inicial de la pieza 1
-        { x: 20, y: 120 }, // Posición inicial de la pieza 2
-        { x: 120, y: 20 }, // Posición inicial de la pieza 3
-        { x: 20, y: 20 }, // Posición inicial de la pieza 4
+        { x: 120, y: 120 },
+        { x: 20, y: 120 },
+        { x: 120, y: 20 },
+        { x: 20, y: 20 },
     ];
     const [positions, setPositions] = useState(initialPosition);
+
+    const targetPositions = [
+        { x: -12, y: -1 },
+        { x: 163, y: -3 },
+        { x: -14, y: 194 },
+        { x: 161, y: 194 },
+    ];
+    const snapThreshold = 20;
 
     const shufflePositions = (positionsArray) => {
         return[...positionsArray].sort(() => Math.random() - 0.5);
     }
 
-    const targetPositions = [
-        { x: -12, y: -1 }, // Posición objetivo de la pieza 1
-        { x: 163, y: -3 }, // Posición objetivo de la pieza 2
-        { x: -14, y: 194 }, // Posición objetivo de la pieza 3
-        { x: 161, y: 194 }, // Posición objetivo de la pieza 4
-    ];
-    const snapThreshold = 20;
 
     useEffect(() => {
         if (timeLeft > 0 && !puzzleCompleted && !isPaused) {
@@ -88,12 +96,9 @@ export default function GameScreen({route, navigation}) {
             },
         })
     );
-    const images = [
-        require('../assets/images/Nivel_1_Elefante/elefante-piece-1.png'),
-        require('../assets/images/Nivel_1_Elefante/elefante-piece-2.png'),
-        require('../assets/images/Nivel_1_Elefante/elefante-piece-3.png'),
-        require('../assets/images/Nivel_1_Elefante/elefante-piece-4.png'),
-    ];
+
+    const images = levelData.pieces.map((piece) => imageResolver(piece.image));
+    const completeImage = imageResolver(levelData.pieces[0].image.replace("-piece-1", "-completo"));
 
     return (
         <ImageBackground
@@ -129,7 +134,10 @@ export default function GameScreen({route, navigation}) {
                     ))}
                 </View>
 
-                <TouchableOpacity style={styles.pauseButton} onPress={() => setIsPaused(true)}>
+                <TouchableOpacity 
+                    style={styles.pauseButton}
+                    onPress={() => setIsPaused(true)}
+                >
                     <Text style={styles.buttonText}>||</Text>
                 </TouchableOpacity>
 
@@ -139,10 +147,11 @@ export default function GameScreen({route, navigation}) {
                             {puzzleCompleted ? (
                                 <>
                                     <Text style={styles.modalTitle}>¡Felicidades!</Text>
-                                    <Text style={styles.modalText}>Elefante</Text>
-                                    <Text style={styles.modalText}>Elephant (Inglés)</Text>
+                                    <Text style={styles.modalText}>{levelData.name}</Text>
+                                    <Text style={styles.modalText}>{levelData["name-eng"]} (Inglés)</Text>
                                     <Image
-                                        source={require('../assets/images/Nivel_1_Elefante/elefante-completo.webp')}
+                                        style={styles.modalCompleteImage}
+                                        source={completeImage}
                                         resizeMode="contain"
                                     />
                                     <TouchableOpacity
@@ -246,6 +255,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         backgroundColor: '#FFBC47',
+    },
+    modalCompleteImage:{
+        width: '70%',
+        height: '50%',
     },
     modalTitle: {
         fontSize: 24,

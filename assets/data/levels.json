@@ -2,6 +2,7 @@
     {
         "id": 1,
         "name": "Elefante",
+        "name-eng": "Elephant",
         "pieces": [
             {"id": 1, "image": "assets/images/Nivel_1_Elefante/elefante-piece-1.png"},
             {"id": 2, "image": "assets/images/Nivel_1_Elefante/elefante-piece-2.png"},
@@ -12,6 +13,7 @@
     {
         "id": 2,
         "name": "Mono",
+        "name-eng": "Monkey",
         "pieces": [
             {"id": 1, "image": "assets/images/Nivel_2_Mono/mono-piece-1.png"},
             {"id": 2, "image": "assets/images/Nivel_2_Mono/mono-piece-2.png"},
@@ -22,6 +24,7 @@
     {
         "id": 3,
         "name": "Cebra",
+        "name-eng": "Zebra",
         "pieces": [
             {"id": 1, "image": "assets/images/Nivel_3_Cebra/cebra-piece-1.png"},
             {"id": 2, "image": "assets/images/Nivel_3_Cebra/cebra-piece-2.png"},
@@ -32,6 +35,7 @@
     {
         "id": 4,
         "name": "León",
+        "name-eng": "Lion",
         "pieces": [
             {"id": 1, "image": "assets/images/Nivel_4_Leon/leon-piece-1.png"},
             {"id": 2, "image": "assets/images/Nivel_4_Leon/leon-piece-2.png"},
@@ -42,6 +46,7 @@
     {
         "id": 5,
         "name": "Rinoceronte",
+        "name-eng": "Rhino",
         "pieces": [
             {"id": 1, "image": "assets/images/Nivel_5_Rino/rino-piece-1.png"},
             {"id": 2, "image": "assets/images/Nivel_5_Rino/rino-piece-2.png"},
