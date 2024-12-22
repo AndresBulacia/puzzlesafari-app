@@ -5,12 +5,15 @@ import { useLevels } from "../context/LevelContext";
 import levelsData from '../assets/data/levels.json';
 import imageResolver from "../utils/imageResolver";
 import { ResizeMode } from "react-native-video";
+import * as Animatable from "react-native-animatable";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 export default function GameScreen({route, navigation}) {
     const [timeLeft, setTimeLeft] = useState(500); //Temporizador
     const [puzzleCompleted, setPuzzleCompleted] = useState(false); //Estado del juego
     const [showResult, setShowResult] = useState(false); //Mostrar el resultado
     const [isPaused, setIsPaused] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false);
     const {levelId} = route.params;
     const {unlockNextLevel} = useLevels();
 
@@ -27,10 +30,10 @@ export default function GameScreen({route, navigation}) {
     const [positions, setPositions] = useState(initialPosition);
 
     const targetPositions = [
-        { x: -12, y: -1 },
-        { x: 163, y: -3 },
+        { x: -14, y: -15 },
+        { x: 173, y: -15 },
         { x: -14, y: 194 },
-        { x: 161, y: 194 },
+        { x: 173, y: 194 },
     ];
     const snapThreshold = 20;
 
@@ -57,8 +60,13 @@ export default function GameScreen({route, navigation}) {
             );
         });
         if(isPuzzleComplete) {
-            setPuzzleCompleted(true);
-            setShowResult(true);
+            const timer = setTimeout(() => {
+                setShowResult(true);
+                setShowConfetti(true);
+                setPuzzleCompleted(true);
+            }, 1000);
+
+            return () => clearTimeout(timer);
         }
     }, [positions]);
 
@@ -108,7 +116,6 @@ export default function GameScreen({route, navigation}) {
             <View style={styles.container}>
                 <Text style={styles.levelTitle}>Nivel - {levelId}</Text>
                 <Text style={styles.timerText}>Tiempo restante: {timeLeft} segundos</Text>
-
                 <View style={styles.puzzleContainer}>
                     {positions.map((pos, index) =>(
                         <View
@@ -143,7 +150,20 @@ export default function GameScreen({route, navigation}) {
 
                 <Modal visible={showResult} transparent={true} animationType="fade">
                     <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
+                            {showConfetti && (
+                                <ConfettiCannon
+                                    count={50} // Número de partículas
+                                    origin={{ x: 200, y: 0 }} // Origen del confeti
+                                    fadeOut={true} // Desaparición gradual
+                                />
+                            )}
+                            <Animatable.View
+                                animation="zoomIn" // Tipo de animación
+                                duration={800} // Duración de la animación
+                                style={styles.modalContent}
+                                onAnimationEnd={() => setShowConfetti(true)} // Activar confeti al finalizar la animación
+                            >
+                        
                             {puzzleCompleted ? (
                                 <>
                                     <Text style={styles.modalTitle}>¡Felicidades!</Text>
@@ -153,11 +173,11 @@ export default function GameScreen({route, navigation}) {
                                         style={styles.modalCompleteImage}
                                         source={completeImage}
                                         resizeMode="contain"
-                                    />
+                                        />
                                     <TouchableOpacity
                                         style={styles.retryButton}
                                         onPress={handleLevelComplete}
-                                    >
+                                        >
                                         <Text style={styles.buttonText}>Siguiente Nivel</Text>
                                     </TouchableOpacity>
                                 </>
@@ -172,7 +192,8 @@ export default function GameScreen({route, navigation}) {
                                     {puzzleCompleted ? "Volver al Menú" : "Reiniciar"}
                                 </Text>
                             </TouchableOpacity>
-                        </View>
+      
+                            </Animatable.View>
                     </View>
                 </Modal>
 
