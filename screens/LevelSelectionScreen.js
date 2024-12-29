@@ -1,15 +1,39 @@
-import React from "react";
+import {React, useState, useEffect}  from "react";
 import {View, Text, TouchableOpacity, ImageBackground, StyleSheet, Button} from 'react-native';
 import { useLevels } from "../context/LevelContext.js";
 import { Audio } from "expo-av";
 
 export default function LevelSelectionScreen({navigation}) {
     const {levels} = useLevels();
+    const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+    const [buttonSound, setButtonSound] = useState(null);
 
     const handleLevelPress = (level) => {
             navigation.navigate('GameScreen', {levelId : level.id})
     }
 
+     useEffect(() => {
+            //Carga de sonido para los botones
+            async function loadSound() {
+                const {sound} = await Audio.Sound.createAsync(require('../assets/sounds/sfx_pop.mp3'));
+                setButtonSound(sound);
+            }
+            loadSound();
+    
+            return () => {
+                if(buttonSound) {
+                    buttonSound.unloadAsync();
+                }
+            };
+        }, []);
+    
+        const playButtonSound = async () => {
+            if (isSoundEnabled && buttonSound) {
+                await buttonSound.replayAsync();
+            }
+        };
+    
+        
     return (
         <ImageBackground
             source={require('../assets/background.jpg')}
@@ -26,7 +50,10 @@ export default function LevelSelectionScreen({navigation}) {
                             styles.levelButton,
                             level.unlocked ? styles.unlocked : styles.locked,
                         ]}
-                        onPress={() => handleLevelPress(level)}
+                        onPress={() => {
+                            playButtonSound();
+                            handleLevelPress(level)
+                        }}
                         disabled={!level.unlocked}
                     >
                         <Text>
@@ -37,7 +64,10 @@ export default function LevelSelectionScreen({navigation}) {
 
                     <TouchableOpacity 
                         style={styles.pauseButton}
-                        onPress={() => navigation.navigate('HomeScreen')}
+                        onPress={() => {
+                            playButtonSound();
+                            navigation.navigate('HomeScreen')
+                        }}
                     >
                         <Text style={styles.buttonText}>Volver</Text>
                     </TouchableOpacity>

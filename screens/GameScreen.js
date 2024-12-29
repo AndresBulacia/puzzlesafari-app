@@ -1,26 +1,28 @@
-import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ImageBackground, PanResponder, Animated } from "react-native";
 import { useLevels } from "../context/LevelContext";
 import levelsData from '../assets/data/levels.json';
 import imageResolver from "../utils/imageResolver";
-import { ResizeMode } from "react-native-video";
 import * as Animatable from "react-native-animatable";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { Audio } from "expo-av";
+import { useFonts } from "expo-font";
 
 export default function GameScreen({route, navigation}) {
-    const [timeLeft, setTimeLeft] = useState(500); //Temporizador
+    const [timeLeft, setTimeLeft] = useState(60); //Temporizador
     const [puzzleCompleted, setPuzzleCompleted] = useState(false); //Estado del juego
     const [showResult, setShowResult] = useState(false); //Mostrar el resultado
     const [isPaused, setIsPaused] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
+    const [winSound, setWinSound] = useState(false);
+    const [loseSound, setLoseSound] = useState(false);
+    const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+    const [buttonSound, setButtonSound] = useState(null);
     const {levelId} = route.params;
     const {unlockNextLevel} = useLevels();
 
-    // Obtener los datos del nivel actual
     const levelData = levelsData.find((level) => level.id === levelId);
     
-    // Posiciones iniciales y objetivo de las piezas
     const initialPosition = [
         { x: 120, y: 120 },
         { x: 20, y: 120 },
@@ -41,12 +43,54 @@ export default function GameScreen({route, navigation}) {
         return[...positionsArray].sort(() => Math.random() - 0.5);
     }
 
+    const [fontsLoaded] = useFonts ({
+            Baloo: require('../assets/fonts/Baloo.ttf'),
+        });
+        if(!fontsLoaded) {
+            return null;
+        }
+
+        
+        
+
+
+    useEffect(() => {
+        const loadSound = async () => {
+            const {sound} = await Audio.Sound.createAsync(
+                require('../assets/sounds/sfx_pop.mp3')
+            );
+            const { sound: win } = await Audio.Sound.createAsync(
+                require("../assets/sounds/sfx-win-game.mp3")
+            );
+            const { sound: lose } = await Audio.Sound.createAsync(
+                require("../assets/sounds/sfx-lost-game.mp3")
+            );
+            setButtonSound(sound);
+            setWinSound(win);
+            setLoseSound(lose);
+        };
+
+        loadSound();
+
+        return() => {
+            if(winSound) winSound.unloadAsync();
+            if(loseSound) loseSound.unloadAsync();
+            if(buttonSound) buttonSound.unloadAsync();
+        };
+    }, []);
+
+    const playButtonSound = async () => {
+        if (isSoundEnabled && buttonSound) {
+            await buttonSound.replayAsync();
+        }
+    };
 
     useEffect(() => {
         if (timeLeft > 0 && !puzzleCompleted && !isPaused) {
             const timerId = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
             return () => clearInterval(timerId);
         }else if (timeLeft === 0 && !puzzleCompleted) {
+            loseSound?.replayAsync();
             setShowResult(true);
         }
     }, [timeLeft, puzzleCompleted, isPaused]);
@@ -61,16 +105,18 @@ export default function GameScreen({route, navigation}) {
         });
         if(isPuzzleComplete) {
             const timer = setTimeout(() => {
+                winSound?.replayAsync();
                 setShowResult(true);
                 setShowConfetti(true);
                 setPuzzleCompleted(true);
-            }, 1000);
+            }, 1500);
 
             return () => clearTimeout(timer);
         }
     }, [positions]);
 
     const handleRetry = () => {
+        playButtonSound();
         setTimeLeft(60);
         setPuzzleCompleted(false);
         setShowResult(false);
@@ -111,9 +157,9 @@ export default function GameScreen({route, navigation}) {
     return (
         <ImageBackground
             source={require('../assets/background.jpg')}
-            style={styles.container}
+            style={styles.imageBackground}
         >
-            <View style={styles.container}>
+            <View style={styles.overlay}>
                 <Text style={styles.levelTitle}>Nivel - {levelId}</Text>
                 <Text style={styles.timerText}>Tiempo restante: {timeLeft} segundos</Text>
                 <View style={styles.puzzleContainer}>
@@ -134,16 +180,18 @@ export default function GameScreen({route, navigation}) {
                                 style={styles.image}
                                 resizeMode="contain"
                             />
-                            <Text style={styles.coordinateText}>
+                            {/* <Text style={styles.coordinateText}>
                                 x: {pos.x.toFixed(0)}, y: {pos.y.toFixed(0)}
-                            </Text>
+                            </Text> */}
                         </View>
                     ))}
                 </View>
 
                 <TouchableOpacity 
                     style={styles.pauseButton}
-                    onPress={() => setIsPaused(true)}
+                    onPress={() => {
+                        playButtonSound();
+                        setIsPaused(true)}}
                 >
                     <Text style={styles.buttonText}>||</Text>
                 </TouchableOpacity>
@@ -152,16 +200,15 @@ export default function GameScreen({route, navigation}) {
                     <View style={styles.modalContainer}>
                             {showConfetti && (
                                 <ConfettiCannon
-                                    count={50} // Número de partículas
-                                    origin={{ x: 200, y: 0 }} // Origen del confeti
-                                    fadeOut={true} // Desaparición gradual
+                                    count={100}
+                                    origin={{ x: 200, y: 0 }}
+                                    fadeOut={true}
                                 />
                             )}
                             <Animatable.View
-                                animation="zoomIn" // Tipo de animación
-                                duration={800} // Duración de la animación
+                                animation="zoomIn"
+                                duration={800}
                                 style={styles.modalContent}
-                                onAnimationEnd={() => setShowConfetti(true)} // Activar confeti al finalizar la animación
                             >
                         
                             {puzzleCompleted ? (
@@ -201,11 +248,17 @@ export default function GameScreen({route, navigation}) {
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
                             <Text style={styles.modalTitle}>Juego en pausa</Text>
-                            <TouchableOpacity style={styles.retryButton} onPress={() => setIsPaused(false)}>
+                            <TouchableOpacity style={styles.retryButton} onPress={() => {
+                                playButtonSound();
+                                setIsPaused(false)}}
+                            >
                                 <Text style={styles.buttonText}>Reanundar</Text>
                             </TouchableOpacity>
                             
-                            <TouchableOpacity style={styles.retryButton} onPress={() => navigation.navigate('HomeScreen')}>
+                            <TouchableOpacity style={styles.retryButton} onPress={() => {
+                                playButtonSound();
+                                navigation.navigate('HomeScreen')}}
+                            >
                                 <Text style={styles.buttonText}>Volver al Menú</Text>
                             </TouchableOpacity>
                         </View>
@@ -218,27 +271,40 @@ export default function GameScreen({route, navigation}) {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    imageBackground: {
         flex: 1,
         justifyContent: 'center',
-        alignContent: 'center',
+        alignItems: 'center',
+    },
+    overlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: 20,
         backgroundColor: 'rgba(0,0,0,0.5)',
-        resizeMode: 'cover',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
     },
     levelTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 46,
+        fontFamily: 'Baloo',
         marginBottom: 20,
+        color:'#fff',
+        textAlign: 'center',
     },
     timerText: {
         fontSize: 18,
-        color: '#333',
+        fontFamily: 'Baloo',
+        color: '#fff',
+        marginBottom: 20,
     },
     puzzleContainer: {
         width: 340,
         height: 400,
-        backgroundColor: "#ccc",
+        backgroundColor: "rgba(204,204,204,0.3)",
         borderRadius: 10,
         overflow: 'hidden',
         position: "relative",
