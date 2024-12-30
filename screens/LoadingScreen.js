@@ -29,6 +29,7 @@ export default function LoadingScreen({onLoadingComplete}) {
                 style={styles.backgroundImage}
                 resizeMode="cover"
             >
+                <View style={styles.overlay}></View>
                 <View style={styles.footer}>
                     <Text style={styles.percentageText}>
                         {Math.round(progress * 100)}%
@@ -49,6 +50,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
     },
+    overlay: {
+        ...StyleSheet.absoluteFillObject, // Esto asegura que el View ocupe toda la pantalla
+        backgroundColor: 'rgba(0, 0, 0, 0.2)', // Fondo semitransparente
+    },
     footer: {
         alignItems: 'center',
         marginBottom: 50,
@@ -56,7 +61,7 @@ const styles = StyleSheet.create({
     percentageText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#000',
+        color: '#FFF',
         marginBottom: 5,
     },
     loadingText: {

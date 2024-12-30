@@ -28,7 +28,7 @@ const imageResolver = (imagePath) => {
         "assets/images/Nivel_5_Rino/rino-piece-2.png": require("../assets/images/Nivel_5_Rino/rino-piece-2.png"),
         "assets/images/Nivel_5_Rino/rino-piece-3.png": require("../assets/images/Nivel_5_Rino/rino-piece-3.png"),
         "assets/images/Nivel_5_Rino/rino-piece-4.png": require("../assets/images/Nivel_5_Rino/rino-piece-4.png"),
-        "assets/images/Nivel_5_Rino/rinoceronte-completo.png": require("../assets/images/Nivel_5_Rino/rinoceronte-completo.png"),
+        "assets/images/Nivel_5_Rino/rino-completo.png": require("../assets/images/Nivel_5_Rino/rino-completo.png"),
     };
 
     return images[imagePath] || null;

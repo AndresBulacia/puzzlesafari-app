@@ -151,9 +151,11 @@ export default function GameScreen({route, navigation}) {
         })
     );
 
+    const totalLevels = levelData.length;
+    const isLastLevel = currentLevel === totalLevels;
+
     const images = levelData.pieces.map((piece) => imageResolver(piece.image));
     const completeImage = imageResolver(levelData.pieces[0].image.replace("-piece-1", "-completo"));
-
     return (
         <ImageBackground
             source={require('../assets/background.jpg')}
@@ -216,11 +218,12 @@ export default function GameScreen({route, navigation}) {
                                     <Text style={styles.modalTitle}>¡Felicidades!</Text>
                                     <Text style={styles.modalText}>{levelData.name}</Text>
                                     <Text style={styles.modalText}>{levelData["name-eng"]} (Inglés)</Text>
+                                    {console.log('img: ', completeImage)}
                                     <Image
                                         style={styles.modalCompleteImage}
                                         source={completeImage}
                                         resizeMode="contain"
-                                        />
+                                    />
                                     <TouchableOpacity
                                         style={styles.retryButton}
                                         onPress={handleLevelComplete}
@@ -349,12 +352,13 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         fontSize: 24,
-        fontWeight: 'bold',
+        fontFamily: 'Baloo',
         marginBottom: 10,
         color: '#ffffff',
     },
     modalText: {
-        fontSize: 18,
+        fontSize: 24,
+        fontFamily: 'Baloo',
         color: "#333",
         marginVertical: 5,
     },
@@ -368,7 +372,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: 'Baloo',
         color: '#ffffff',
     },
     coordinateText: {
